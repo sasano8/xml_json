@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if page.url_to_print_page %}
+    <a href="{{ page.url_to_print_page }}" title="印刷用ページ" class="md-content__button md-icon">
+        {% include ".icons/material/printer.svg" %}
+    </a>
+{% endif %}
+{% if page.url_to_pdf %}
+    <!-- コメント -->
+    <a href="{{ page.url_to_pdf }}" title="ダウンロードPDF" class="md-content__button md-icon">
+        {% include ".icons/material/pdf-box.svg" %}
+    </a>
+{% endif %}
+
+{{ super() }}
+{% endblock content %}
