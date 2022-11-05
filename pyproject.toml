@@ -20,6 +20,13 @@ mypy = "^0.812"
 pytest = "^6.2.2"
 pytest-cov = "^3.0.0"
 
+mkdocs = "^1.4.2"
+mkautodoc = "^0.2.0"
+mkdocs-material = "^8.5.8"
+pymdown-extensions = "^9.7"
+mkdocs-print-site-plugin = "^2.3.4"
+
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
