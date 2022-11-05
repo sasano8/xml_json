@@ -1,5 +1,6 @@
-from .base import NamedNode
 from typing import Dict, List, Tuple
+
+from .base import NamedNode
 
 
 class SqlStatement(NamedNode):

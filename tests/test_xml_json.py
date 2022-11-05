@@ -1,7 +1,7 @@
-from xml_json import get_parser, JmlTransformer, Identifier, set_debug, Node, parse_xml
 import pytest
 from lark import Lark
 
+from xml_json import Identifier, JmlTransformer, Node, get_parser, parse_xml, set_debug
 from xml_json.base import ValueNode
 
 
@@ -319,7 +319,6 @@ TEXT: ">" /.*/ "<"
     # xml_pattern = "(?:<.*?>)(.*?)(?:<\\/>)"
     # result = re.findall(xml_pattern, "<>asdf<><>asdfas<>")
     # assert result
-
     from xml.dom.minidom import parse, parseString
 
     document = parseString(

@@ -1,15 +1,10 @@
-from attr import attr
-from lark import Lark
 import os
-from lark import Transformer, v_args
 from typing import Type, Union
-from .base import (
-    Identifier,
-    RootNode,
-    AnonymousNode,
-    ValueNode,
-    Node,
-)
+
+from attr import attr
+from lark import Lark, Transformer, v_args
+
+from .base import AnonymousNode, Identifier, Node, RootNode, ValueNode
 
 path = os.path.dirname(__file__)
 
@@ -202,7 +197,7 @@ def create_root_node(node):
 
 
 def create_node(node):
-    from xml.dom.minidom import Text, Document
+    from xml.dom.minidom import Document, Text
 
     if isinstance(node, Text):
         return ValueNode("", attrs={}, help="", elements=[node.data])
