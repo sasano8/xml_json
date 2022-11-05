@@ -38,7 +38,7 @@ jobs:
 
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: poetry install
+        run: poetry install --with test
 
       - name: Check code style with Black
         run: poetry run black --check --diff .

@@ -11,7 +11,7 @@ readme = "README.md"
 python = ">=3.8,<=3.10.*"
 lark = "^1.1.2"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.test.dependencies]
 pre-commit = "^2.12.0"
 black = "^20.8b1"
 isort = "^5.8.0"
@@ -20,6 +20,7 @@ mypy = "^0.812"
 pytest = "^6.2.2"
 pytest-cov = "^3.0.0"
 
+[tool.poetry.group.docs.dependencies]
 mkdocs = "^1.4.2"
 mkautodoc = "^0.2.0"
 mkdocs-material = "^8.5.8"
