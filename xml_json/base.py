@@ -208,3 +208,13 @@ class Identifier(TermNode, NamedNode):
     def value(self):
         it = (x.replace('"', '\\"') for x in self.elements)
         return ".".join(it)
+
+
+class Alias(Identifier):
+    name = "alias"
+
+    def is_alias(self):
+        return True
+
+    def create(self, name, attrs, help, elements):
+        ...

@@ -134,33 +134,31 @@ def test_graph():
     # 有効グラフは方向性がある。つまり、エッジは "方方向" の関係を意味する。
 
     """
-    @networkx.undirected(
-    a = @node(
-        @edge(b 4)
-        @edge(c 3)
-    )
-    b = @node(
-        @edge(d 2)
-    )
-    c = @node(
-        @edge(d 4)
-    )
-    d = @node()
-    )
-
+    # networkx.undirected
     @networkx.directed(
-    a = @node(
-        @edge(b 4)
-        @edge(c 3)
-    )
-    b = @node(
-        @edge(d 2)
-    )
-    c = @node(
-        @edge(d 4)
-    )
-    d = @node()
+        "a":@node(
+            "b":@edge(4)
+            "c":@edge(3)
+        )
+        "b":@node(
+            "d":@edge(2)
+        )
+        "c":@node(
+            "d":@edge(4)
+        )
+        "d":@node()
     )
     """
 
     # topological sortが可能 =  有向非巡回グラフ（DAG）である
+
+
+"""
+query = @from(users)
+    :@join(
+        groups
+        @(users.id == groups.id)
+)
+
+@from(query):@select(*)
+"""
