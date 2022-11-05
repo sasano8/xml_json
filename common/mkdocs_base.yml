@@ -1,0 +1,64 @@
+edit_uri: "edit/main/docs/"
+docs_dir: ./docs
+
+theme:
+  # favicon: img/logo2.png
+  # logo: img/logo2.png
+  name: "material"
+  language: "ja"
+  custom_dir: docs/overrides
+  palette:
+    - primary: green
+      accent: deep orange
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
+plugins:
+  - search
+  - print-site:
+      add_print_site_banner: true
+      print_site_banner_template: "docs/overrides/print_site_banner.tpl"
+      print_page_title: '印刷用ページ'
+      # Table of contents
+      toc_title: '目次'
+      toc_depth: 6
+      # Content-related
+      add_full_urls: false
+      enumerate_headings: true
+      enumerate_figures: true
+      path_to_pdf: "" # pdfを指定でダウンロードボタン表示
+      add_to_navigation: true
+      add_cover_page: true
+      cover_page_template: ""
+      add_table_of_contents: true
+      # exclude:
+      #   - "index.md"
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      css_class: highlight
+  - mkautodoc
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - attr_list
+  # - toc:
+  #   permalink: 'true'
+
+extra_css:
+  - overrides/css/custom.css
+  - https://unpkg.com/mermaid@8.0.0/dist/mermaid.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.0.0/dist/mermaid.min.js

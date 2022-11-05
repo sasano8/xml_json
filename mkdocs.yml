@@ -1,0 +1,16 @@
+INHERIT: ./common/mkdocs_base.yml
+
+site_name: ポートフォリオ
+# site_description: sasano8's portfolio
+site_url: https://portfolio.ys-method.com/
+# repo_name: encode/httpx
+repo_url: https://github.com/sasano8/portfolio/
+edit_uri: "edit/main/docs/"
+
+nav:
+  - introduction: "index.md"
+  - tutorial: "tutorial.md"
+  - syntax: "syntax.md"
+  - node: "node.md"
+  - sql: "sql.md"
+  - graph: "graph.md"

@@ -1,0 +1,45 @@
+// https://www.liquid-technologies.com/XML/EBNF1.1.aspx
+
+?start: root
+
+// <?xml version="1.0" encoding="UTF-8"?>
+?root    : [textdecl] stag
+textdecl    : "<?xml" attrs "?>"
+stag     : "<" NAME attrs ">" contents "</" NAME ">"
+stag_single     : "<" NAME attrs "/>"
+
+// NAME: LETTER (":"|"_"|"-"|"."|LETTER)*
+NAME: LETTER (":"|"_"|"-"|LETTER)*
+TEXT: (":"|"_"|"-"|"#"|"!"|LETTER|DIGIT)*
+// ?text  : (_STRING_INNER|"")
+tag_text : /.[^%]+/
+// CONTENT: /\/\/[^\n]*/
+CONTENT: /\>.*\</
+
+attr     : NAME "=" string
+attrs    : [attr (attr)*]
+?contents : [content (content)*]
+?content  : stag_single | stag | tag_text
+// text     : _STRING_INNER [stag]
+comment  : "<!--" _STRING_INNER "-->"
+
+%import common.ESCAPED_STRING
+%import common.LETTER
+%import common.DIGIT
+
+string : ESCAPED_STRING
+
+_STRING_INNER: /.*?/
+_STRING_ESC_INNER: _STRING_INNER /(?<!\\)(\\\\)*?/
+
+// STag        : "<" Name (S Attribute)* S? ">"
+
+// #x20 = chr(32) = chr(0x20) = ord(" ")
+// #x9 = tab
+// #xD = \r
+// #xA = \n
+// S           : (#x20 | #x9 | #xD | #xA)+
+
+%ignore /\t/
+%ignore /\r/
+%ignore /\n/

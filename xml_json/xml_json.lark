@@ -1,0 +1,53 @@
+// JSON
+?json: object
+        | array
+        | string
+        // | SIGNED_NUMBER      -> number
+        | SIGNED_INT      -> int
+        | SIGNED_FLOAT      -> float
+        | "true"             -> true
+        | "false"            -> false
+        | "null"             -> null
+
+array  : "[" [json ("," json)*] "]"
+object : "{" [pair ("," pair)*] "}"
+pair   : string ":" json
+
+string : ESCAPED_STRING
+
+%import common.ESCAPED_STRING
+// %import common.SIGNED_NUMBER
+%import common.SIGNED_INT
+%import common.SIGNED_FLOAT
+%import common.WS
+
+%ignore WS
+
+// JSON XML
+// CNAMEはletterから始まるので数字とは衝突しない
+?start: root
+
+%import common.CNAME
+%import common.SH_COMMENT
+
+%ignore SH_COMMENT
+
+
+?root: elements -> root
+?elements.9: [element (element)*] -> elements
+?element : node
+            | identifier
+            | json_node
+
+identifier  : [CNAME ("." CNAME)*]
+?json_node: json
+
+node        : "(" identifier attrs help ":" elements ")" [chain*]
+chain        : ".(" identifier attrs help ":" elements ")"
+// ?chain       : node ["." node*] -> chain
+// ?extension_method.9       : [chain*]
+attrs: [object] -> attrs
+help: [string] -> help
+
+// and or if elief else
+
