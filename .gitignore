@@ -13,3 +13,4 @@ __pycache__
 # pytest-cov
 .coverage
 htmlcov
+site
