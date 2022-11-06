@@ -26,7 +26,7 @@ def test_transform():
     )
     # fmt: on
 
-    assert [x.name for x in nodes.traverse()] == [
+    assert [x.tag for x in nodes.traverse()] == [
         "k",
         "c",
         "g",
@@ -42,10 +42,10 @@ def test_transform():
 
     @nodes.traverse
     def traversed(node):
-        new_node = node.copy(name=node.name * 2)
+        new_node = node.copy(tag=node.tag * 2)
         return new_node
 
-    assert [x.name for x in traversed] == [
+    assert [x.tag for x in traversed] == [
         "kk",
         "cc",
         "gg",
@@ -61,10 +61,10 @@ def test_transform():
 
     @nodes.transform
     def transformed(node):
-        new_node = node.copy(name=node.name * 3)
+        new_node = node.copy(tag=node.tag * 3)
         return new_node
 
-    assert [x.name for x in transformed.traverse()] == [
+    assert [x.tag for x in transformed.traverse()] == [
         "kkk",
         "ccc",
         "ggg",
@@ -78,7 +78,7 @@ def test_transform():
         "aaa",
     ]
 
-    assert [x.name for x in nodes.traverse_terms()] == [
+    assert [x.tag for x in nodes.traverse_terms()] == [
         "k",
         "g",
         "i",
@@ -89,10 +89,10 @@ def test_transform():
 
     @nodes.transform_terms
     def transformed_terms(node):
-        new_node = node.copy(name=node.name * 4)
+        new_node = node.copy(tag=node.tag * 4)
         return new_node
 
-    assert [x.name for x in transformed_terms.traverse()] == [
+    assert [x.tag for x in transformed_terms.traverse()] == [
         "kkkk",
         "c",
         "gggg",
@@ -106,20 +106,20 @@ def test_transform():
         "a",
     ]
 
-    assert [x.name for x in nodes.traverse_terms(where=lambda x: x.name == "h")] == [
-        "h"
-    ]
+    assert [x.tag for x in nodes.traverse_terms(where=lambda x: x.tag == "h")] == ["h"]
 
     assert [
-        x.name
+        x.tag
         for x in nodes.transform_terms(
-            transformer=lambda x: x.copy(name=x.name * 5), where=lambda x: x.name == "h"
+            transformer=lambda x: x.copy(tag=x.tag * 5), where=lambda x: x.tag == "h"
         ).traverse()
     ] == ["k", "c", "g", "i", "d", "b", "f", "hhhhh", "j", "e", "a"]
 
 
 def test_graph():
     "グラフ用のライブラリとしてNetworkXがある"
+
+    # TODO: onnxモデルからグラフを取得する
 
     # import networkx as nx
 

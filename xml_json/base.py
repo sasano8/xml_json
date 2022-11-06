@@ -5,15 +5,15 @@ from copy import deepcopy
 class Node:
     export = False  # export alias
 
-    def __init__(self, name, attrs, help, elements):
-        self.name = name
+    def __init__(self, tag, attrs, help, elements):
+        self.tag = tag
         self.attrs = {} if attrs is None else attrs
         self.help = "" if help is None else help
         self.elements = elements
 
-    def __copy__(self, name=None, attrs=None, help=None, elements=None):
+    def __copy__(self, tag=None, attrs=None, help=None, elements=None):
         kwargs = {
-            "name": name or self.name,
+            "tag": tag or self.tag,
             "attrs": attrs or deepcopy(self.attrs),
             "help": help or self.help,
             "elements": elements or list(self.elements),
@@ -35,10 +35,10 @@ class Node:
 
         if len(self.elements) < 2:
             it = " ".join(repr(x) for x in self.elements)
-            return f"({self.name}{meta}: {it})"
+            return f"({self.tag}{meta}: {it})"
         else:
             it = " ".join(repr(x) + "\n" for x in self.elements)
-            return f"({self.name}{meta}:\n {it})"
+            return f"({self.tag}{meta}:\n {it})"
 
     @property
     def identifiers(self):
@@ -107,14 +107,14 @@ class TermNode:
 
 
 class NamedNode(Node):
-    name: str
+    tag: str
 
-    def __init__(self, name, attrs, help, elements):
-        Node.__init__(self, self.__class__.name, attrs, help, elements)
+    def __init__(self, tag, attrs, help, elements):
+        Node.__init__(self, self.__class__.tag, attrs, help, elements)
 
 
 class RootNode(NamedNode):
-    name = "root"
+    tag = "root"
 
     def __repr__(self):
         meta = ""
@@ -133,12 +133,12 @@ class RootNode(NamedNode):
 
 
 class ValueNode(TermNode, NamedNode):
-    name = "json"
+    tag = "json"
 
-    def __init__(self, name, attrs, help, elements):
+    def __init__(self, tag, attrs, help, elements):
         if len(elements) != 1:
             raise ValueError()
-        Node.__init__(self, self.__class__.name, attrs, help, elements)
+        Node.__init__(self, self.__class__.tag, attrs, help, elements)
 
     @property
     def value(self):
@@ -156,7 +156,7 @@ class ValueNode(TermNode, NamedNode):
             meta += f' "{self.help}"'
 
         if meta:
-            return f"({self.__class__.name}{meta}: {self.value})"
+            return f"({self.__class__.tag}{meta}: {self.value})"
         else:
             return json.dumps(self.value, ensure_ascii=False)
 
@@ -165,18 +165,15 @@ class ValueNode(TermNode, NamedNode):
 
 
 class Identifier(TermNode, NamedNode):
-    name = "identifier"
+    tag = "identifier"
 
-    # def __init__(self, *args):
-    #     self._children = args
-
-    def __init__(self, name, attrs, help, elements):
+    def __init__(self, tag, attrs, help, elements):
         if len(elements) < 1:
             raise ValueError()
         if not all(isinstance(x, str) for x in elements):
             raise ValueError()
 
-        Node.__init__(self, self.__class__.name, attrs, help, elements)
+        Node.__init__(self, self.__class__.tag, attrs, help, elements)
 
     def __getitem__(self, i):
         return self.elements[i]
@@ -197,7 +194,7 @@ class Identifier(TermNode, NamedNode):
 
         if meta:
             it = ('"' + x.replace('"', '\\"') + '"' for x in self.elements)
-            return f"({self.__class__.name}{meta}: {' '.join(it)})\n"
+            return f"({self.__class__.tag}{meta}: {' '.join(it)})\n"
         else:
             return self.value
 
@@ -210,11 +207,49 @@ class Identifier(TermNode, NamedNode):
         return ".".join(it)
 
 
-class Alias(Identifier):
-    name = "alias"
+class Alias(TermNode, NamedNode):
+    tag = "alias"
 
     def is_alias(self):
         return True
 
-    def create(self, name, attrs, help, elements):
+    def create(self, tag, attrs, help, elements):
         ...
+
+
+class Placeholder(TermNode, NamedNode):
+    tag = "placeholder"
+
+    def __init__(self, tag, attrs, help, elements):
+        if len(elements) < 1:
+            raise ValueError()
+        if not all(isinstance(x, str) for x in elements):
+            raise ValueError()
+
+        Node.__init__(self, self.__class__.tag, attrs, help, elements)
+
+    @property
+    def name(self):  # 衝突している
+        return self.elements[0]
+
+    @property
+    def annotation(self):
+        return self.elements[1]
+
+    @property
+    def default(self):
+        return self.elements[2]
+
+    @property
+    def value(self):
+        return self._value
+
+    @classmethod
+    def validate(cls, x):
+        return x
+
+    def receive(self, x):
+        self._value = self.validate(x)
+
+    def is_received(self):
+        return hasattr(self, "_value")

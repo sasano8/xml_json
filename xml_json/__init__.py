@@ -4,6 +4,5 @@ from .parser import (
     Node,
     Visitor,
     get_parser,
-    parse_xml,
     set_debug,
 )

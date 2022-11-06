@@ -1,7 +1,7 @@
 import pytest
 from lark import Lark
 
-from xml_json import Identifier, JmlTransformer, Node, get_parser, parse_xml, set_debug
+from xml_json import Identifier, JmlTransformer, Node, get_parser, set_debug
 from xml_json.base import ValueNode
 
 
@@ -127,7 +127,7 @@ def test_transform_element(as_element: Lark):
 
     tree = as_element.parse("(query: )")
     result = tf.transform(tree)
-    assert result.name == "query"
+    assert result.tag == "query"
     assert result.attrs == {}
     assert result.help == ""
     assert result.elements == []
@@ -135,7 +135,7 @@ def test_transform_element(as_element: Lark):
 
     tree = as_element.parse('(query {"id": 1} "help": 1 2)')
     result = tf.transform(tree)
-    assert result.name == "query"
+    assert result.tag == "query"
     assert result.attrs == {"id": 1}
     assert result.help == "help"
     assert result.elements == [1, 2]
@@ -233,197 +233,21 @@ def test_structured_sql(root: Lark):
     pprint.pprint(result)
 
 
-def test_convert_xml_ast():
-    import tempfile
-
-    xml = """<?xml version="1.0" encoding="UTF-8"?>
-    <d:propfind xmlns:d="DAV:">
-        <d:prop xmlns:oc="http://owncloud.org/ns">
-            <d:getlastmodified/>
-            <d:getcontentlength/>
-            <d:getcontenttype/>
-            <oc:permissions/>
-            <oc:invoicenumber/>
-            <d:resourcetype/>
-            <d:getetag/>
-        </d:prop>
-    </d:propfind>"""
-
-    with tempfile.NamedTemporaryFile("r") as tmp:
-        with open(tmp.name, "w") as f:
-            f.write(xml)
-
-        with open(tmp.name, "r") as f:
-            import xml.etree.ElementTree as ET
-
-            tree = ET.parse(f)
-            ET.XMLPullParser
-            root = tree.getroot()
-            # tag: '{DAV:}propfind'
-            l, _, r = root.tag.rpartition("}")
-            l = l.replace("{", "")
-            print(root)
-
-        # with open(tmp.name, "r") as f:
-        #     import xml.etree.ElementTree as ET
-
-        #     parser = ET.XMLPullParser()
-        #     for line in f.readlines():
-        #         parser.feed(line)
-        #         for event, elem in parser.read_events():
-        #             print(elem)
-        #             # if elem.tag == "title":
-        #             #     print(elem.text)
-
-    def get_parser(start="start", debug=False):
-        with open("xml_json/xml.lark") as grammer:
-            return Lark(
-                grammer.read(),
-                start=start,
-                debug=debug,
-                # parser="lalr",
-                lexer="basic",
-                propagate_positions=False,
-                maybe_placeholders=False,
-            )
-
-    parser = get_parser(debug=True)
-    tree = parser.parse(xml)
-
-
-def test_lark():
-    grammer = """
-tag_text : /.[^%<>]+?/
-// ?elem: "<" "tag"  [CONTENT (CONTENT)*] "<" "tag" "/>"
-?elem: [CONTENT*]
-TEXT: ">" /.*/ "<"
-?start: elem
 """
-    # lark = Lark(
-    #     grammer,
-    #     start="start",
-    #     debug=False,
-    #     parser="lalr",
-    #     # lexer="basic",
-    #     propagate_positions=False,
-    #     maybe_placeholders=False,
-    # )
-    # # elem: "<" ">" "<" ">"
-    # # tree = lark.parse("asdf#!~|=-@`*+;<>?/!'" + '"\\')  # %
-    # # tree = lark.parse("<tag><tag>asdfa<tag/><tag/>")  # %
-    # tree = lark.parse(">>asdfa<<")  # %
-    # assert tree
-
-    import re
-
-    # xml_pattern = "(?:<.*?>)(.*?)(?:<\\/>)"
-    # result = re.findall(xml_pattern, "<>asdf<><>asdfas<>")
-    # assert result
-    from xml.dom.minidom import parse, parseString
-
-    document = parseString(
-        """<?xml version="1.0" encoding="UTF-8"?>
-    <d:propfind xmlns:d="DAV:">
-        <d:prop xmlns:oc="http://owncloud.org/ns">
-            &gt;
-            <d:getlastmodified/>
-            <d:getcontentlength/>
-            <d:getcontenttype/>
-            <oc:permissions/>
-            <oc:invoicenumber/>
-            <d:resourcetype/>
-            <d:getetag/>
-        </d:prop>
-    </d:propfind>"""
-    )
-
-    assert document
-    document.childNodes[0].tagName  # d:propfind
-    document.childNodes[0]._attrs
-    document.childNodes[0]._attrs["xmlns:d"]._value
-    document.childNodes[0].childNodes[0]  # textnode "'\n        '"
-    document.childNodes[0].childNodes[1]  # d:prop
-    document.childNodes[0].childNodes[1].childNodes[
-        0
-    ].data  # '\n            >\n            '
-
-
-# defusedxml
-# python標準のxmlライブラリでは脆弱性があるため、セキュリティを気にする場合はdefusedxmlを使用する
-
-# SAX(Simple API for XML)
-# xmlを解析し、イベント化する
-"""
-
-SetDocumentLocator
-StartDocument
-StartElement :ブックリスト
-StartElement :アイテム (id=11111)
-StartElement :タイトル
-Characters :鹿子木といえばXML
-EndElement :タイトル
-StartElement :筆者
-Characters :鹿子木亨紀
-EndElement :筆者
-StartElement :カテゴリ
-Characters :1
-EndElement :カテゴリ
-EndElement :アイテム
-StartElement :アイテム (id=22222)
-StartElement :タイトル
-Characters :丸橋によるXML講座
-EndElement :タイトル
-StartElement :筆者
-Characters :丸橋玲奈
-EndElement :筆者
-StartElement :カテゴリ
-Characters :2
-EndElement :カテゴリ
-EndElement :アイテム
-StartElement :アイテム (id=33333)
-
-……中略……
-
-EndElement :アイテム
-EndElement :ブックリスト
-EndDocument
-"""
-
-
-def test_parse_from_xml():
-    tree = parse_xml(
-        """<?xml version="1.0" encoding="UTF-8"?>
-    <d:propfind xmlns:d="DAV:">
-        <d:prop xmlns:oc="http://owncloud.org/ns">
-            &gt;
-            <d:getlastmodified/>
-            <d:getcontentlength/>
-            <d:getcontenttype/>
-            <oc:permissions/>
-            <oc:invoicenumber/>
-            <d:resourcetype/>
-            <d:getetag/>
-        </d:prop>
-    </d:propfind>"""
-    )
-    assert (
-        str(tree).replace(" ", "").replace("\n", "")
-        == """
-        (d.propfind {"xmlns:d": "DAV:"}: (d.prop {"xmlns:oc": "http://owncloud.org/ns"}:
+@d.propfind {"xmlns:d": "DAV:"} (
+    @d.prop {"xmlns:oc": "http://owncloud.org/ns"}(
         ">"
-        (d.getlastmodified: )
-        (d.getcontentlength: )
-        (d.getcontenttype: )
-        (oc.permissions: )
-        (oc.invoicenumber: )
-        (d.resourcetype: )
-        (d.getetag: )
-        ))""".replace(
-            " ", ""
-        ).replace(
-            "\n", ""
-        )
+        @d.getlastmodified()
+        @d.getcontentlength()
+        @d.getcontenttype()
+        @oc.permissions()
+        @oc.invoicenumber()
+        @d.resourcetype()
+        @d.getetag()
+        1 == @d.getetag()
+        and 1 == @d.getetag()
     )
+)"""
 
 
 """
@@ -556,7 +380,7 @@ class Identifiered:
 
 
 """
-@from(
+@from{}(
     users
 )
 :@join(

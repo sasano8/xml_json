@@ -77,7 +77,7 @@ operators = {
 identifiers = {
     "abs": value_to_token,  # @演算子は構文上衝突が多いので関数とする
     "pow": value_to_token,
-    "pow": value_to_token,
+    "unnest": value_to_token,
     "pow": value_to_token,
     "pow": value_to_token,
 }

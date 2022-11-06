@@ -34,6 +34,18 @@ class Param(Parameter):
         super().__init__(
             name, Parameter.KEYWORD_ONLY, default=default, annotation=annotation
         )
+        if default is not ...:
+            self.value = default
+
+    @classmethod
+    def validate(cls, x):
+        return x
+
+    def receive(self, x):
+        self.value = self.validate(x)
+
+    def is_received(self):
+        return hasattr(self, "value")
 
 
 class BaseCompiler:
