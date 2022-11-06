@@ -119,7 +119,7 @@ def test_transform():
 def test_graph():
     "グラフ用のライブラリとしてNetworkXがある"
 
-    # TODO: onnxモデルからグラフを取得する
+    # TODO: onnxモデルからグラフを取得する https://github.com/onnx/tutorials/blob/main/tutorials/VisualizingAModel.md
 
     # import networkx as nx
 
@@ -134,6 +134,7 @@ def test_graph():
     # 有効グラフは方向性がある。つまり、エッジは "方方向" の関係を意味する。
 
     """
+    # @@networkx.directed
     # networkx.undirected
     @networkx.directed(
         "a":@node(

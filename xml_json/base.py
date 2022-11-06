@@ -35,10 +35,10 @@ class Node:
 
         if len(self.elements) < 2:
             it = " ".join(repr(x) for x in self.elements)
-            return f"({self.tag}{meta}: {it})"
+            return f"@{self.tag}{meta}({it})"
         else:
             it = " ".join(repr(x) + "\n" for x in self.elements)
-            return f"({self.tag}{meta}:\n {it})"
+            return f"@{self.tag}{meta}(\n {it})"
 
     @property
     def identifiers(self):
@@ -156,7 +156,7 @@ class ValueNode(TermNode, NamedNode):
             meta += f' "{self.help}"'
 
         if meta:
-            return f"({self.__class__.tag}{meta}: {self.value})"
+            return f"@{self.__class__.tag}{meta}({self.value})"
         else:
             return json.dumps(self.value, ensure_ascii=False)
 
@@ -194,7 +194,7 @@ class Identifier(TermNode, NamedNode):
 
         if meta:
             it = ('"' + x.replace('"', '\\"') + '"' for x in self.elements)
-            return f"({self.__class__.tag}{meta}: {' '.join(it)})\n"
+            return f"@{self.__class__.tag}{meta}({' '.join(it)})\n"
         else:
             return self.value
 

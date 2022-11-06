@@ -105,7 +105,7 @@ def test_parse_element(as_element: Lark):
     tree = as_element.parse("aaa.bbb")
     assert tree.data == "identifier"
 
-    tree = as_element.parse("(QUERY: )")  # TODO: 同じタグで閉じるには？
+    tree = as_element.parse("@QUERY()")
     assert tree.data == "node"
 
     with pytest.raises(Exception):
@@ -125,7 +125,7 @@ def test_transform_element(as_element: Lark):
     assert str(result) == "aaa.bbb"
     assert isinstance(result, Identifier)
 
-    tree = as_element.parse("(query: )")
+    tree = as_element.parse("@query()")
     result = tf.transform(tree)
     assert result.tag == "query"
     assert result.attrs == {}
@@ -133,7 +133,7 @@ def test_transform_element(as_element: Lark):
     assert result.elements == []
     assert isinstance(result, Node)
 
-    tree = as_element.parse('(query {"id": 1} "help": 1 2)')
+    tree = as_element.parse('@query {"id": 1} "help"(1 2)')
     result = tf.transform(tree)
     assert result.tag == "query"
     assert result.attrs == {"id": 1}
@@ -152,42 +152,42 @@ def test_structured_sql(root: Lark):
     # return
 
     sql = """
-    (query {
+    @query {
         "name": "my model."
-    } "this is test query.":
-        (or: 1)
-        .(or: 2)
-        .(or: 3)
-        (from: users)
-        (groups: groups)
+    } "this is test query."(
+        @or(1)
+        :@or(2)
+        :@or(3)
+        @from(users)
+        @groups(groups)
         # from: groups -> *
         # users = from as t
         # users = (from{} "")
-        (where:
+        @where(
             {}
-            (and: {})
+            @and({})
         )
-        (groupby: )
-        (having: )
-        (asc: name)
-        (desc: name)
-        (offset: 0)
-        (limit: +1)
-        (select: name)
-        (select: "name")
-        (select: "age")
+        @groupby()
+        @having()
+        @asc(name)
+        @desc(name)
+        @offset(0)
+        @limit(+1)
+        @select(name)
+        @select("name")
+        @select("age")
         # => x: x + 1;
         # @func(x: str, a: int, d: object): x + 1 and 3;
         # (func() {} "": @(1))
         # @func() {} "": @(1 + 2)
     )
-    (query.node:
+    @query.node(
         aaa.bbb
     )
     """
 
     """
-    (from: users).(where:
+    @from(users):@where(
         x => @(
             x.id == 1 and x.group == 1
         )
@@ -231,168 +231,3 @@ def test_structured_sql(root: Lark):
     import pprint
 
     pprint.pprint(result)
-
-
-"""
-@d.propfind {"xmlns:d": "DAV:"} (
-    @d.prop {"xmlns:oc": "http://owncloud.org/ns"}(
-        ">"
-        @d.getlastmodified()
-        @d.getcontentlength()
-        @d.getcontenttype()
-        @oc.permissions()
-        @oc.invoicenumber()
-        @d.resourcetype()
-        @d.getetag()
-        1 == @d.getetag()
-        and 1 == @d.getetag()
-    )
-)"""
-
-
-"""
-* = (from: users)
-* = users -> from
-t1 = groups -> from
-users = (from: $)
-groups = (from: (select: $))
-
-
-(select :
-    from: users -> *
-    # groups -> from
-
-    # JOIN t2 ON t1.user_id = t2.user_id
-    # JOIN t3 ON t1.user_id = t3.user_id
-
-    t2 = groups -> join.on: @(users.group_id == t2.group_id)
-    t3 = groups -> join -> on: @(users.group_id == t3.group_id)
-    t4 = groups -> join -> using: emp_no
-
-    join: groups@t2 @(users.group_id == t2.group_id)
-
-    join.on: groups -> t2 @(users.group_id == t2.group_id)
-    t3 <- join.using: groups emp_no
-
-    this.where(@(
-        users == 1
-    ))
-)
-"""
-
-"""
-(from:
-    users
-).(join.on:
-    groups
-    @(users.group_id == groups.id)
-).(join.using:
-    groups
-    emp_no
-).(groupby: group)
-.(orderby: 1)
-.(limit: 1)
-).(select:
-    name
-)
-
-(from:).(select:
-    1
-)
-"""
-
-
-"""
-@query(
-    @from{
-        "": "aaaaaaaaaaaaaaaaaaaa"
-    }(
-        users
-    ):@join(
-        groups,
-        users.id == groups.id
-    )
-):@select{
-    "": "asdfddddddddddddddddddddd"
-}(
-    id
-    name
-)
-"""
-
-
-def querable(func):
-    ...
-
-
-class ParamError(Exception):
-    ...
-
-
-@querable
-def func(source, id):
-    """
-    @from(
-        users = $source
-    )
-    :@join(
-        groups
-        users.id == groups.id
-    )
-    :@where(
-        users.id == $id: str
-    )
-    :@select(
-        id -> user_id
-        name
-    ) -> t1
-    """
-    if id != "dsadfa":
-        raise ParamError("id", "")
-
-
-def query(*args):
-    ...
-
-
-class Identifiered:
-    def __init__(self, *args):
-        ...
-
-    # """
-    # @from(
-    #     users = $source
-    # )
-    # :@join(
-    #     groups
-    #     users.id == groups.id
-    # )
-    # :@where(
-    #     users.id == $id: str
-    # )
-    # :@select(
-    #     id -> user_id
-    #     name
-    # ) -> t1
-    # """,
-    # source=Identifiered("asdfa"),
-    # id="sadfas",
-
-
-"""
-@from{}(
-    users
-)
-:@join(
-    groups
-    users.id == users.id
-)
-:@where(
-    users.id == $id: str
-    users.id and groups.id
-)
-:@select(
-    users.id
-    users.name
-) -> t1
-"""

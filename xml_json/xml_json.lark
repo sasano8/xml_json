@@ -42,12 +42,9 @@ string : ESCAPED_STRING
 identifier  : [CNAME ("." CNAME)*]
 ?json_node: json
 
-node        : "(" identifier attrs help ":" elements ")" [chain*]
-chain        : ".(" identifier attrs help ":" elements ")"
-// ?chain       : node ["." node*] -> chain
-// ?extension_method.9       : [chain*]
+node        : "@" identifier attrs help "(" elements ")" [chain*]
+chain        : ":@" identifier attrs help "(" elements ")"
 attrs: [object] -> attrs
 help: [string] -> help
 
-// and or if elief else
 

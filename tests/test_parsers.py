@@ -60,15 +60,16 @@ def test_parse_from_xml():
     assert (
         str(tree).replace(" ", "").replace("\n", "")
         == """
-        (d.propfind {"xmlns:d": "DAV:"}: (d.prop {"xmlns:oc": "http://owncloud.org/ns"}:
-        ">"
-        (d.getlastmodified: )
-        (d.getcontentlength: )
-        (d.getcontenttype: )
-        (oc.permissions: )
-        (oc.invoicenumber: )
-        (d.resourcetype: )
-        (d.getetag: )
+        @d.propfind {"xmlns:d": "DAV:"}(
+            @d.prop {"xmlns:oc": "http://owncloud.org/ns"}(
+                ">"
+                @d.getlastmodified()
+                @d.getcontentlength()
+                @d.getcontenttype()
+                @oc.permissions()
+                @oc.invoicenumber()
+                @d.resourcetype()
+                @d.getetag()
         ))""".replace(
             " ", ""
         ).replace(
