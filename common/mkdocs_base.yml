@@ -23,9 +23,9 @@ plugins:
   - print-site:
       add_print_site_banner: true
       print_site_banner_template: "docs/overrides/print_site_banner.tpl"
-      print_page_title: '印刷用ページ'
+      print_page_title: "印刷用ページ"
       # Table of contents
-      toc_title: '目次'
+      toc_title: "目次"
       toc_depth: 6
       # Content-related
       add_full_urls: false
@@ -55,6 +55,8 @@ markdown_extensions:
   - attr_list
   # - toc:
   #   permalink: 'true'
+  - pymdownx.tabbed:
+    alternate_style: true
 
 extra_css:
   - overrides/css/custom.css
