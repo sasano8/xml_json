@@ -542,49 +542,76 @@ PDFとして保存したい場合は、<code>印刷 -> PDFに保存</code>を実
 <p>These codes are roughly equivalent.
 Not fully compatible, but can convert structures to each other.</p>
 <p>=== "jsl"</p>
-<div class="highlight"><pre><span></span><code><span class="err">```</span><span class="w"> </span><span class="n">jsl</span><span class="w"></span>
-<span class="nv">@values</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="ss">&quot;text1&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">@values</span><span class="p">(</span><span class="ss">&quot;text2&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="ss">&quot;text3&quot;</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-<span class="err">```</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;termy&quot;</span><span class="nt">&gt;</span>
+
+``` jsl
+@values(
+    &quot;text1&quot;
+    @values(&quot;text2&quot;)
+    &quot;text3&quot;
+)
+```
+
+<span class="nt">&lt;/div&gt;</span>
 </code></pre></div>
 
 <p>=== "xml"</p>
-<div class="highlight"><pre><span></span><code>``` xml
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;termy&quot;</span><span class="nt">&gt;</span>
+
+``` xml
 <span class="nt">&lt;values&gt;</span>
     text1
     <span class="nt">&lt;values&gt;</span>text2<span class="nt">&lt;/values&gt;</span>
     text3
 <span class="nt">&lt;/values&gt;</span>
 ```
+
+<span class="nt">&lt;/div&gt;</span>
 </code></pre></div>
 
 <p>=== "SXML"</p>
-<div class="highlight"><pre><span></span><code>``` sxml
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;termy&quot;</span><span class="nt">&gt;</span>
+
+``` sxml
 (values
     (value &quot;text1&quot;)
     (values (value &quot;text2&quot;))
     (value &quot;text3&quot;)
 )
 ```
+
+<span class="nt">&lt;/div&gt;</span>
 </code></pre></div>
 
 <h2 id="index-node-chain">node chain</h2>
 <p>supports chaining of nodes, Supports node chaining and achieves beautiful node representation.
 Binary tree representation will be cleaner.</p>
-<div class="highlight"><pre><span></span><code>    1
+<p>=== "jsl(use chain)"</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;termy&quot;</span><span class="nt">&gt;</span>
+
+``` jsl
+    1
     :@add(2)
     :@add(3)
+```
+
+<span class="nt">&lt;/div&gt;</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>    @add(
+
+<p>=== "jsl(no use chain)"</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;termy&quot;</span><span class="nt">&gt;</span>
+
+``` jsl
+    @add(
         @add(
             1
             2
         )
         3
     )
+```
+
+<span class="nt">&lt;/div&gt;</span>
 </code></pre></div></section><section class="print-page" id="tutorial"><h1 id="tutorial-tutorial">tutorial</h1></section><section class="print-page" id="syntax"><h1 id="syntax-syntax">syntax</h1></section><section class="print-page" id="node"><h1 id="node-node">node</h1></section><section class="print-page" id="sql"><h1 id="sql-sql">sql</h1></section><section class="print-page" id="graph"><h1 id="graph-graph">graph</h1></section></div>
 
 
