@@ -236,9 +236,47 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          introduction
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         introduction
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#node-chain" class="md-nav__link">
+    node chain
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -354,6 +392,28 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#node-chain" class="md-nav__link">
+    node chain
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -381,6 +441,59 @@
 
 
 <h1 id="index">index</h1>
+<p>jsl = json + s expression + xml</p>
+<ul>
+<li>json is a first value.</li>
+<li>Nodes can be expressed like xml or s-expressions.</li>
+</ul>
+<h2 id="example">example</h2>
+<p>These codes are roughly equivalent.
+Not fully compatible, but can convert structures to each other.</p>
+<p>=== "jsl"</p>
+<div class="highlight"><pre><span></span><code><span class="err">```</span><span class="w"> </span><span class="n">jsl</span><span class="w"></span>
+<span class="nv">@values</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="ss">&quot;text1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nv">@values</span><span class="p">(</span><span class="ss">&quot;text2&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="ss">&quot;text3&quot;</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+<span class="err">```</span><span class="w"></span>
+</code></pre></div>
+
+<p>=== "xml"</p>
+<div class="highlight"><pre><span></span><code>``` xml
+<span class="nt">&lt;values&gt;</span>
+    text1
+    <span class="nt">&lt;values&gt;</span>text2<span class="nt">&lt;/values&gt;</span>
+    text3
+<span class="nt">&lt;/values&gt;</span>
+```
+</code></pre></div>
+
+<p>=== "SXML"</p>
+<div class="highlight"><pre><span></span><code>``` sxml
+(values
+    (value &quot;text1&quot;)
+    (values (value &quot;text2&quot;))
+    (value &quot;text3&quot;)
+)
+```
+</code></pre></div>
+
+<h2 id="node-chain">node chain</h2>
+<p>supports chaining of nodes, Supports node chaining and achieves beautiful node representation.
+Binary tree representation will be cleaner.</p>
+<div class="highlight"><pre><span></span><code>    1
+    :@add(2)
+    :@add(3)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>    @add(
+        @add(
+            1
+            2
+        )
+        3
+    )
+</code></pre></div>
 
 
 
