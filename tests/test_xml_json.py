@@ -23,7 +23,7 @@ def as_element():
     return get_parser(start="element")
 
 
-def test_transform_json(as_json: Lark):
+def test_json_transformer(as_json: Lark):
     tf = JmlTransformer()
 
     tree = as_json.parse("1")
@@ -105,8 +105,23 @@ def test_parse_element(as_element: Lark):
     tree = as_element.parse("aaa.bbb")
     assert tree.data == "identifier"
 
-    tree = as_element.parse("@QUERY()")
+    tree = as_element.parse("@ QUERY()")
     assert tree.data == "node"
+
+    tree = as_element.parse("$a")
+    assert tree.data == "param"
+
+    with pytest.raises(Exception):
+        tree = as_element.parse("$ a")
+
+    tree = as_element.parse("$a: int")
+    assert tree.data == "param"
+
+    tree = as_element.parse("$a: int = null")
+    assert tree.data == "param"
+
+    tree = as_element.parse("aaa.bbb = 1")
+    assert tree.data == "alias"
 
     with pytest.raises(Exception):
         tree = as_element.parse("1 2")
@@ -146,10 +161,6 @@ def test_transform_element(as_element: Lark):
 
 def test_structured_sql(root: Lark):
     """Specification overview."""
-
-    # tree = root.parse("{}")
-    # assert tree
-    # return
 
     sql = """
     @query {

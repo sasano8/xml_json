@@ -75,6 +75,7 @@ operators = {
 }
 
 identifiers = {
+    # "table": value_to_token,  # to table identifier from str
     "abs": value_to_token,  # @演算子は構文上衝突が多いので関数とする
     "pow": value_to_token,
     "unnest": value_to_token,

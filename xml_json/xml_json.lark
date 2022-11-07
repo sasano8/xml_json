@@ -29,6 +29,8 @@ string : ESCAPED_STRING
 
 %import common.CNAME
 %import common.SH_COMMENT
+%import common.LETTER
+%import common.DIGIT
 
 %ignore SH_COMMENT
 
@@ -38,8 +40,14 @@ string : ESCAPED_STRING
 ?element : node
             | identifier
             | json_node
+            | param
+            | alias
+
 
 identifier  : [CNAME ("." CNAME)*]
+PARAM: "$" ("_"|LETTER) ("_"|LETTER|DIGIT)*
+param: PARAM [":" identifier ["=" (json_node|identifier)]]
+alias: identifier "=" (json_node|param|identifier)
 ?json_node: json
 
 node        : "@" identifier attrs help "(" elements ")" [chain*]
@@ -48,3 +56,6 @@ attrs: [object] -> attrs
 help: [string] -> help
 
 
+// snowflakeではテーブルリテラルは FROM 句でのみサポートされます。
+// snowflakeでは識別子は$か''で囲む select * from $t1
+// snowflakeではtable関数でidentifierとなる select * from table(:t1) where t1.name == 1

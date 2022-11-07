@@ -9,6 +9,10 @@ def test_transform():
     """
     dfs(postorder)で処理されること
     http://www-ikn.ist.hokudai.ac.jp/~kida/lecture/alg2019-07.pdf
+
+    - paramsが生じた場合: 評価を保留すること
+    - identifierの場合: 評価可能
+    - aliasの場合: エイリアスの中身に依存
     """
     # fmt: off
     nodes = node(
@@ -152,14 +156,3 @@ def test_graph():
     """
 
     # topological sortが可能 =  有向非巡回グラフ（DAG）である
-
-
-"""
-query = @from(users)
-    :@join(
-        groups
-        @(users.id == groups.id)
-)
-
-@from(query):@select(*)
-"""

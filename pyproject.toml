@@ -11,6 +11,7 @@ include = ["CHANGELOG.md"]
 [tool.poetry.dependencies]
 python = ">=3.8,<=3.10.*"
 lark = "^1.1.2"
+typing-extensions = "^4.4.0"
 
 [tool.poetry.group.test.dependencies]
 pre-commit = "^2.12.0"
