@@ -12,6 +12,8 @@ Not fully compatible, but can convert structures to each other.
 
 === "jsl"
 
+    <div class="termy">
+
     ``` jsl
     @values(
         "text1"
@@ -20,7 +22,11 @@ Not fully compatible, but can convert structures to each other.
     )
     ```
 
+    </div>
+
 === "xml"
+
+    <div class="termy">
 
     ``` xml
     <values>
@@ -30,7 +36,11 @@ Not fully compatible, but can convert structures to each other.
     </values>
     ```
 
+    </div>
+
 === "SXML"
+
+    <div class="termy">
 
     ``` sxml
     (values
@@ -40,23 +50,37 @@ Not fully compatible, but can convert structures to each other.
     )
     ```
 
+    </div>
+
 ## node chain
 
 supports chaining of nodes, Supports node chaining and achieves beautiful node representation.
 Binary tree representation will be cleaner.
 
-``` jsl
-    1
-    :@add(2)
-    :@add(3)
-```
+=== "jsl(use chain)"
 
-``` jsl
-    @add(
+    <div class="termy">
+
+    ``` jsl
+        1
+        :@add(2)
+        :@add(3)
+    ```
+
+    </div>
+
+=== "jsl(no use chain)"
+
+    <div class="termy">
+
+    ``` jsl
         @add(
-            1
-            2
+            @add(
+                1
+                2
+            )
+            3
         )
-        3
-    )
-```
+    ```
+
+    </div>
