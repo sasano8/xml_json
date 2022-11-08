@@ -40,6 +40,26 @@ Not fully compatible, but can convert structures to each other.
     )
     ```
 
+=== "jsonlogic"
+
+    ```
+    {"values": [
+        "text1,
+        {"values": "text2"},
+        "text3"
+    ]}
+    ```
+
+=== "JSONML"
+
+    ```
+    ["values",
+        ["value", "text1"],
+        ["values", ["value", "text2"]],
+        ["value", "text3"]
+    ]
+    ```
+
 ## node chain
 
 supports chaining of nodes, Supports node chaining and achieves beautiful node representation.
@@ -64,3 +84,17 @@ Binary tree representation will be cleaner.
             3
         )
     ```
+
+## Create a simple DSL.
+
+```
+def add(a, b):
+    return Value(a.value + b.value)
+
+transformer = Transformer({"add": add})
+
+tree = parser.parse("1:@add(2):@add(3)")
+result = transformer.evalute(tree[0])
+assert result == 6
+
+```
