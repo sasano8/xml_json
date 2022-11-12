@@ -1,8 +1,15 @@
 import pytest
 from lark import Lark
 
-from xml_json import Identifier, JmlTransformer, Node, get_parser, set_debug
-from xml_json.base import ValueNode
+from xml_json import (
+    Identifier,
+    JmlTransformer,
+    JmlAllowAnonymousNodeTransformer,
+    Node,
+    get_parser,
+    set_debug,
+    ValueNode,
+)
 
 
 @pytest.fixture
@@ -128,7 +135,9 @@ def test_parse_element(as_element: Lark):
 
 
 def test_transform_element(as_element: Lark):
-    tf = JmlTransformer()
+    tf = JmlAllowAnonymousNodeTransformer(
+        mapper={"node": Node, "value": ValueNode, "identifier": Identifier}
+    )
 
     tree = as_element.parse("aaa")
     result = tf.transform(tree)
@@ -163,7 +172,7 @@ def test_structured_sql(root: Lark):
     """Specification overview."""
 
     sql = """
-    @query {
+    @query1 {
         "name": "my model."
     } "this is test query."(
         @or(1)
@@ -192,7 +201,7 @@ def test_structured_sql(root: Lark):
         # (func() {} "": @(1))
         # @func() {} "": @(1 + 2)
     )
-    @query.node(
+    @query2.node(
         aaa.bbb
     )
     """
@@ -235,10 +244,17 @@ def test_structured_sql(root: Lark):
 
     from xml_json import Visitor
 
-    tf = JmlTransformer()
+    tf = JmlAllowAnonymousNodeTransformer(
+        mapper={"node": Node, "value": ValueNode, "identifier": Identifier}
+    )
     result = tf.transform(tree)
-    # for node in Visitor.visit(result):
-    #     print(node)
     import pprint
 
     pprint.pprint(result)
+    assert [x.tag for x in result] == ["query1", "query2.node"]
+
+
+def test_onnx():
+    import onnnx
+
+    onnnx.main()

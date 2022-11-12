@@ -2,6 +2,7 @@ import os
 from typing import Type, Union
 
 from lark import Lark, Transformer, v_args
+from lark.exceptions import GrammarError
 
 from .base import AnonymousNode, Identifier, Node, RootNode, ValueNode
 
@@ -28,26 +29,36 @@ def not_support_anonymous(*args, **kwargs):
     raise NotImplementedError()
 
 
+IDENTIFIER = "identifier"
+VALUE = "value"
+
+
 class JmlTransformer(JsonTransformer):
     def __init__(
         self,
         mapper: dict = None,
-        anonymous: Union[Type[Node], None] = AnonymousNode,
-        case_sensitive: bool = True,  # TODO: 実装する
-        allow_anonymous: bool = True,
+        # anonymous: Union[Type[Node], None] = AnonymousNode,
+        # case_sensitive: bool = True,  # TODO: 実装する
+        # allow_anonymous: bool = True,
     ):
         self.mapper = mapper or {}
-        self.anonymous = not_support_anonymous if anonymous is None else anonymous
+        # self.anonymous = not_support_anonymous if anonymous is None else anonymous
 
     def identifier(self, tree):
-        return Identifier("", {}, "", list(str(x).lower() for x in tree))
+        # return Identifier("", {}, "", list(str(x).lower() for x in tree))
+        # elements = [str(x).lower() for x in tree]
+        return self.map(IDENTIFIER, {}, "", tree)
 
     def root(self, tree):
         return RootNode("", {}, "", tree[0])
 
     def elements(self, tree):
-        normalize = lambda x: x if isinstance(x, Node) else ValueNode("", {}, "", [x])
-        result = [normalize(x) for x in tree]
+        # normalize = (
+        #     lambda x: x if isinstance(x, Node) else self.map("value", {}, "", [x])
+        # )
+        result = [
+            x if isinstance(x, Node) else self.map(VALUE, {}, "", [x]) for x in tree
+        ]
         return result
 
     def attrs(self, tree):
@@ -62,12 +73,10 @@ class JmlTransformer(JsonTransformer):
         else:
             return ""
 
-    def node(self, tree):
-        name = str(tree[0])
-        attrs = tree[1]
-        help = tree[2]
-        elements = tree[3]
+    def json_node(self, tree):
+        return self.map(VALUE, {}, "", tree)
 
+    def node(self, tree):
         root = self.create_node(tree)
         current = root
 
@@ -78,32 +87,28 @@ class JmlTransformer(JsonTransformer):
 
         return current
 
-        # if tree[4]:
-        #     elements = tree[3]
-        # else:
-        #     elements = tree[4] + tree[3]
-        # try:
-        #     cls = self.mapper[name]
-        #     return cls(name, attrs, help, elements)
-        # except KeyError:
-        #     return AnonymousNode(name, attrs, help, elements)
-
     def create_node(self, tree):
         name = str(tree[0])
         attrs = tree[1]
         help = tree[2]
         elements = tree[3]
+        return self.map(name, attrs, help, elements)
+
+    def map(self, name, attrs, help, elements):
         try:
             cls = self.mapper[name]
-            return cls(name, attrs, help, elements)
         except KeyError:
-            return AnonymousNode(name, attrs, help, elements)
+            raise GrammarError(f"Not supported tag: {name}")
+        return cls(name, attrs, help, elements)
 
-    # def chain(self, tree):
-    #     return tree
 
-    def json_node(self, tree):
-        return ValueNode(None, {}, "", tree)
+class JmlAllowAnonymousNodeTransformer(JmlTransformer):
+    def map(self, name, attrs, help, elements):
+        try:
+            cls = self.mapper[name]
+        except KeyError:
+            cls = self.mapper["node"]
+        return cls(name, attrs, help, elements)
 
 
 import logging

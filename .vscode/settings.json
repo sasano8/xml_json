@@ -9,7 +9,6 @@
   "python.formatting.provider": "black",
   "yaml.format.enable": true,
   "python.testing.unittestEnabled": false,
-  "python.testing.nosetestsEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.testing.pytestArgs": [
     "-s",
