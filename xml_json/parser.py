@@ -29,9 +29,12 @@ def not_support_anonymous(*args, **kwargs):
     raise NotImplementedError()
 
 
-NODE_ANONYMOUS = "node"
-NODE_IDENTIFIER = "identifier"
-NODE_VALUE = "value"
+NODE_ANONYMOUS = ".node"
+NODE_IDENTIFIER = ".identifier"
+NODE_VALUE = ".value"
+NODE_ALIAS = ".alias"
+NODE_PLACEHOLDER = ".placeholder"
+NODE_EXPRESSION = ".expr"
 
 
 class JmlTransformer(JsonTransformer):

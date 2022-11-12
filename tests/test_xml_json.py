@@ -135,7 +135,7 @@ def test_parse_element(as_element: Lark):
 
 def test_transform_element(as_element: Lark):
     tf = JmlTransformer(
-        mapper={"node": Node, "value": ValueNode, "identifier": Identifier}
+        mapper={".node": Node, ".value": ValueNode, ".identifier": Identifier}
     )
 
     tree = as_element.parse("aaa")
@@ -226,7 +226,7 @@ def test_structured_sql(root: Lark):
         "select",
     ]
 
-    tree: Node = root.parse(sql)
+    tree = root.parse(sql)
     assert tree
 
     # S式
@@ -242,7 +242,7 @@ def test_structured_sql(root: Lark):
     # http://srfi.schemers.org/srfi-110/srfi-110.html
 
     tf = JmlTransformer(
-        mapper={"node": Node, "value": ValueNode, "identifier": Identifier}
+        mapper={".node": Node, ".value": ValueNode, ".identifier": Identifier}
     )
     result = tf.transform(tree)
     import pprint
