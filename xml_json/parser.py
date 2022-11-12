@@ -29,35 +29,25 @@ def not_support_anonymous(*args, **kwargs):
     raise NotImplementedError()
 
 
-IDENTIFIER = "identifier"
-VALUE = "value"
+NODE_ANONYMOUS = "node"
+NODE_IDENTIFIER = "identifier"
+NODE_VALUE = "value"
 
 
 class JmlTransformer(JsonTransformer):
-    def __init__(
-        self,
-        mapper: dict = None,
-        # anonymous: Union[Type[Node], None] = AnonymousNode,
-        # case_sensitive: bool = True,  # TODO: 実装する
-        # allow_anonymous: bool = True,
-    ):
-        self.mapper = mapper or {}
-        # self.anonymous = not_support_anonymous if anonymous is None else anonymous
+    def __init__(self, mapper: dict = {}):
+        self.mapper = mapper
 
     def identifier(self, tree):
-        # return Identifier("", {}, "", list(str(x).lower() for x in tree))
-        # elements = [str(x).lower() for x in tree]
-        return self.map(IDENTIFIER, {}, "", tree)
+        return self.map(NODE_IDENTIFIER, {}, "", tree)
 
     def root(self, tree):
         return RootNode("", {}, "", tree[0])
 
     def elements(self, tree):
-        # normalize = (
-        #     lambda x: x if isinstance(x, Node) else self.map("value", {}, "", [x])
-        # )
         result = [
-            x if isinstance(x, Node) else self.map(VALUE, {}, "", [x]) for x in tree
+            x if isinstance(x, Node) else self.map(NODE_VALUE, {}, "", [x])
+            for x in tree
         ]
         return result
 
@@ -74,7 +64,7 @@ class JmlTransformer(JsonTransformer):
             return ""
 
     def json_node(self, tree):
-        return self.map(VALUE, {}, "", tree)
+        return self.map(NODE_VALUE, {}, "", tree)
 
     def node(self, tree):
         root = self.create_node(tree)
@@ -107,7 +97,7 @@ class JmlAllowAnonymousNodeTransformer(JmlTransformer):
         try:
             cls = self.mapper[name]
         except KeyError:
-            cls = self.mapper["node"]
+            cls = self.mapper[NODE_ANONYMOUS]
         return cls(name, attrs, help, elements)
 
 
@@ -162,55 +152,3 @@ class Visitor:
             yield from Visitor.visit(child, depth + 1)
             # yield (depth, child)
             yield child
-
-
-# def parse_xml(text):
-#     from xml.dom.minidom import parse, parseString
-
-#     document = parseString(text)
-#     return create_node(document)
-
-
-# def trim_nodes(nodes):
-#     from xml.dom.minidom import Text
-
-#     for node in nodes:
-#         if isinstance(node, Text):
-#             node.data = node.data.strip()
-#         yield node
-
-
-# def filter_nodes(nodes):
-#     from xml.dom.minidom import Text
-
-#     for node in nodes:
-#         if isinstance(node, Text):
-#             if node.data != "":
-#                 yield node
-#         else:
-#             yield node
-
-
-# def analyze_node(node):
-#     ...
-
-
-# def create_root_node(node):
-#     return create_node(node)
-
-
-# def create_node(node):
-#     from xml.dom.minidom import Document, Text
-
-#     if isinstance(node, Text):
-#         return ValueNode("", attrs={}, help="", elements=[node.data])
-#     elif isinstance(node, Document):
-#         elements = [create_node(x) for x in filter_nodes(trim_nodes(node.childNodes))]
-#         return RootNode(tag="", attrs={}, help="", elements=elements)
-#     else:
-#         elements = [create_node(x) for x in filter_nodes(trim_nodes(node.childNodes))]
-#         _attrs = node._attrs or {}
-#         attrs = {k: v._value for k, v in _attrs.items()}
-#         return AnonymousNode(
-#             tag=node.tagName.replace(":", "."), attrs=attrs, help="", elements=elements
-#         )
