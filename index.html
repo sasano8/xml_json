@@ -530,6 +530,37 @@ Binary tree representation will be cleaner.</p>
 </div>
 </div>
 </div>
+<div class="highlight"><pre><span></span><code># 型にするか/キーバリューにするか
+@node(
+    name: aaa
+    asdf: asd
+)
+
+# 構文を分ける
+@node(
+    elem_type = 1
+    @shape(
+        @dim(
+            dim_value = 1
+        )
+    )
+)
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>t1 &lt;- @task(5)
+t2 &lt;- @task(5)
+t3 &lt;- @task(5)
+t4 &lt;- @task(5)
+
+all = @task{&quot;name&quot;: &quot;tasks1&quot;}(
+    t1
+    t2
+    t3
+):@task{&quot;name&quot;: &quot;tasks2&quot;}(
+    t4
+    t5
+    t6
+)
+</code></pre></div>
 <h2 id="create-a-simple-dsl">Create a simple DSL.</h2>
 <div class="highlight"><pre><span></span><code>def add(a, b):
     return Value(a.value + b.value)
@@ -539,6 +570,48 @@ transformer = Transformer({&quot;add&quot;: add})
 tree = parser.parse(&quot;1:@add(2):@add(3)&quot;)
 result = transformer.evalute(tree[0])
 assert result == 6
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>statements = {
+    &quot;from&quot;: From,
+    &quot;join&quot;: Join,
+    &quot;where&quot;: Where,
+    &quot;groupby&quot;: GroupBy,
+    &quot;having&quot;: Having,
+    &quot;orderby&quot;: OrderBy,
+    &quot;select&quot;: Select
+}
+
+expressions = {
+    &quot;+&quot;: add,
+    &quot;-&quot;: minus
+}
+
+identifiers = {
+
+}
+
+functions = {
+
+}
+
+parser = Schema(
+    name=&quot;myschema&quot;,
+    nodes=statements,
+    expressions=expressions,
+    identifiers=identifiers,
+    functions=functions,
+    case_sensitive=True,
+    allow_unkown_identifiers=True,
+    allow_unkown_functions=True,
+    allow_param=True,
+    allow_type={None, int, str, float, bool, list, dict}
+)
+
+parser.parse(&quot;&quot;&quot;
+@from(u = users)
+:@join(g = groups, @(u.id == g.id))
+:@where(@(u.id, g.id))
+&quot;&quot;&quot;)
 </code></pre></div>
 
 
