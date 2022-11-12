@@ -88,16 +88,11 @@ class JmlTransformer(JsonTransformer):
         try:
             cls = self.mapper[name]
         except KeyError:
-            raise GrammarError(f"Not supported tag: {name}")
-        return cls(name, attrs, help, elements)
-
-
-class JmlAllowAnonymousNodeTransformer(JmlTransformer):
-    def map(self, name, attrs, help, elements):
-        try:
-            cls = self.mapper[name]
-        except KeyError:
-            cls = self.mapper[NODE_ANONYMOUS]
+            try:
+                cls = self.mapper[NODE_ANONYMOUS]
+                return cls(name, attrs, help, elements)
+            except KeyError:
+                raise GrammarError(f"Not supported anonymous tag: {name}")
         return cls(name, attrs, help, elements)
 
 

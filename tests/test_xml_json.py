@@ -4,7 +4,6 @@ from lark import Lark
 from xml_json import (
     Identifier,
     JmlTransformer,
-    JmlAllowAnonymousNodeTransformer,
     Node,
     get_parser,
     set_debug,
@@ -135,7 +134,7 @@ def test_parse_element(as_element: Lark):
 
 
 def test_transform_element(as_element: Lark):
-    tf = JmlAllowAnonymousNodeTransformer(
+    tf = JmlTransformer(
         mapper={"node": Node, "value": ValueNode, "identifier": Identifier}
     )
 
@@ -242,9 +241,7 @@ def test_structured_sql(root: Lark):
     # T式
     # http://srfi.schemers.org/srfi-110/srfi-110.html
 
-    from xml_json import Visitor
-
-    tf = JmlAllowAnonymousNodeTransformer(
+    tf = JmlTransformer(
         mapper={"node": Node, "value": ValueNode, "identifier": Identifier}
     )
     result = tf.transform(tree)

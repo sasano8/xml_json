@@ -1,7 +1,6 @@
 from .parser import (
     Identifier,
     JmlTransformer,
-    JmlAllowAnonymousNodeTransformer,
     Node,
     ValueNode,
     Visitor,
