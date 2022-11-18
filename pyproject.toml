@@ -30,8 +30,6 @@ mkdocs-material = "^8.5.8"
 pymdown-extensions = "^9.7"
 mkdocs-print-site-plugin = "^2.3.4"
 
-
-
 [tool.poetry.group.ml.dependencies]
 onnx = "^1.12.0"
 
