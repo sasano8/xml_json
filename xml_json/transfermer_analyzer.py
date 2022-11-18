@@ -1,11 +1,12 @@
 from .parser import (
-    JmlTransformer,
-    NODE_VALUE,
-    NODE_IDENTIFIER,
-    NODE_ANONYMOUS,
     NODE_ALIAS,
-    NODE_PLACEHOLDER,
+    NODE_ANONYMOUS,
+    NODE_CALL,
     NODE_EXPRESSION,
+    NODE_IDENTIFIER,
+    NODE_PLACEHOLDER,
+    NODE_VALUE,
+    JmlTransformer,
 )
 
 
@@ -34,6 +35,7 @@ class TransformeAnalyzerBase:
             "is_allow_alias",
             "is_allow_placeholder",
             "is_allow_expression",
+            "is_allow_call",
         ]
 
     def _get_spec(self, name):
@@ -69,6 +71,9 @@ class TransformeAnalyzerBase:
             return "upper"
 
         raise Exception()
+
+    def is_allow_call(self):
+        return NODE_CALL in self.root.mapper
 
 
 class TransformeAnalyzer(TransformeAnalyzerBase):

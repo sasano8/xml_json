@@ -1,4 +1,4 @@
-from xml_json.base import AnonymousNode, ValueNode, RootNode
+from xml_json.base import AnonymousNode, RootNode, ValueNode
 
 
 def parse_xml(text):

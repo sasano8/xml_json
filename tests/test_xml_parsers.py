@@ -1,7 +1,6 @@
 from xml_json import Node
 from xml_json.parsers import xml as xml_parser
 
-
 """
 順序インジケータ:
     All: 要素が順不同に現れることができ、 且つ、各子要素は一度だけ発生しなければならない
@@ -95,18 +94,3 @@ def test_parse_from_xml():
             "\n", ""
         )
     )
-
-
-"""
-@from(
-    users
-)
-:@join(
-    groups
-    @(users, groups => users.id == groups.id)
-    @(users, groups => @{id: user.id, name: user.name, group_id: group.id})
-):@where(x =>
-    x.id == 1
-    and x.group_id == 2
-)
-"""

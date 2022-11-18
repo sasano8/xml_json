@@ -1,5 +1,190 @@
-from pydantic import BaseModel, Field
-from typing import List, Dict, Tuple, Union
+import json
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+from pydantic import BaseModel, Extra, Field, conlist
+
+
+def __repr__(self):
+    meta = ""
+    if self.attrs:
+        meta += f" {json.dumps(self.attrs, ensure_ascii=False)}"
+
+    if self.help:
+        meta += f' "{self.help}"'
+
+    if len(self.elements) < 2:
+        it = " ".join(repr(x) for x in self.elements)
+        return it
+    else:
+        it = " ".join(repr(x) + "\n" for x in self.elements)
+        return it
+
+
+def __iter__(self):
+    return self.elements.__iter__()
+
+
+def __str__(self):
+    return self.__repr__()
+
+
+class NodeAbc:
+    ...
+
+
+class NodeBase(BaseModel, NodeAbc, extra=Extra.forbid):
+    __iter__ = __iter__
+    __repr__ = __repr__
+    __str__ = __str__
+
+    def dict(self, *args, **kwargs):
+        obj = super().dict(*args, **kwargs)
+        return {
+            "tag": obj["tag"],
+            "attrs": obj["attrs"],
+            "help": obj["help"],
+            "elements": obj["elements"],
+        }
+
+
+class Node(NodeBase):
+    tag: Optional[str] = ".node"
+    attrs: Dict[str, Any] = {}
+    help: str = ""
+    elements: Union[List, Tuple]
+
+    def __repr__(self):
+        meta = ""
+        if self.attrs:
+            meta += f" {json.dumps(self.attrs, ensure_ascii=False)}"
+
+        if self.help:
+            meta += f' "{self.help}"'
+
+        if len(self.elements) < 2:
+            it = " ".join(repr(x) for x in self.elements)
+            return f"@{self.tag}{meta}({it})"
+        else:
+            it = " ".join(repr(x) + "\n" for x in self.elements)
+            return f"@{self.tag}{meta}(\n {it})"
+
+
+class RootNode(BaseModel, NodeAbc):
+    tag: Optional[str] = Field(".root", const=True)
+    attrs: Dict[str, Any] = {}
+    help: str = ""
+    elements: Union[List, Tuple]
+
+    def one(self):
+        undefined = object()
+        result = self.one_or(undefined)
+        if result is undefined:
+            raise RuntimeError()
+        else:
+            return result
+
+    def one_or(self, default):
+        if len(self.__root__) == 0:
+            return default
+        if len(self.__root__) == 1:
+            return self.__root__[0]
+        raise RuntimeError()
+
+    __repr__ = __repr__
+    __str__ = __str__
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def dict(self, *args, **kwargs):
+        obj = super().dict(*args, **kwargs)
+        return {
+            "tag": obj["tag"],
+            "attrs": obj["attrs"],
+            "help": obj["help"],
+            "elements": obj["elements"],
+        }
+
+
+class ValueNode(NodeBase):
+    tag: str = Field(".value", const=True)
+    attrs: Dict[str, Any] = {}
+    help: str = ""
+    elements: conlist(Any, min_items=1, max_items=1)
+
+    @property
+    def value(self):
+        return self.elements[0]
+
+    def __eq__(self, other) -> bool:
+        return self.value == other
+
+    def __repr__(self):
+        meta = ""
+        if self.attrs:
+            meta += f" {json.dumps(self.attrs, ensure_ascii=False)}"
+
+        if self.help:
+            meta += f' "{self.help}"'
+
+        if meta:
+            return f"@{self.__class__.tag}{meta}({self.value})"
+        else:
+            return json.dumps(self.value, ensure_ascii=False)
+
+    def __iter__(self):
+        yield from ()
+
+
+class Identifier(NodeBase):
+    tag: str = Field(".identifier", const=True)
+    attrs: Dict[str, Any] = {}
+    help: str = ""
+    # elements: Union[List, Tuple]
+    elements: List[str]
+
+    def __repr__(self):
+        meta = ""
+        if self.attrs:
+            meta += f" {json.dumps(self.attrs, ensure_ascii=False)}"
+
+        if self.help:
+            meta += f' "{self.help}"'
+
+        if meta:
+            raise NotImplementedError()
+            it = ('"' + x.replace('"', '\\"') + '"' for x in self.elements)
+            return f"@{self.__class__.tag}{meta}({' '.join(it)})\n"
+        else:
+            return repr(self.value)
+
+    @property
+    def value(self):
+        it = (x.replace('"', '\\"') for x in self.elements)
+        return ".".join(it)
+
+    def __iter__(self):
+        yield from ()
+
+
+class Alias(NodeBase):
+    tag: str = Field(".alias", const=True)
+    attrs: Dict[str, Any] = {}
+    help: str = ""
+    elements: Union[List, Tuple]
+
+    def __iter__(self):
+        yield from ()
+
+
+class Placeholder(NodeBase):
+    tag: str = Field(".placeholder", const=True)
+    attrs: Dict[str, Any] = {}
+    help: str = ""
+    elements: Union[List, Tuple]
+
+    def __iter__(self):
+        yield from ()
 
 
 class Ident:
@@ -13,37 +198,37 @@ class Func:
         ...
 
 
-class From(BaseModel):
+class From(NodeBase):
     name: str = Field("from", const=True)
     # nodes: Tuple[]
 
 
-class Join(BaseModel):
+class Join(NodeBase):
     name: str = Field("from", const=True)
     nodes: Tuple[From, "Join"]
 
 
-class Where(BaseModel):
+class Where(NodeBase):
     name: str = Field("from", const=True)
     nodes: Tuple[Union[From, Join]]
 
 
-class GroupBy(BaseModel):
+class GroupBy(NodeBase):
     name: str = Field("from", const=True)
     nodes: Tuple[Union[From, Join, Where]]
 
 
-class Having(BaseModel):
+class Having(NodeBase):
     name: str = Field("from", const=True)
     nodes: Tuple[GroupBy]
 
 
-class OrderBy(BaseModel):
+class OrderBy(NodeBase):
     name: str = Field("from", const=True)
     nodes: Tuple[Union[From, Join, Where, GroupBy]]
 
 
-class Select(BaseModel):
+class Select(NodeBase):
     name: str = Field("from", const=True)
     nodes: Tuple[Union[From, Join, Where, GroupBy, OrderBy]]
 

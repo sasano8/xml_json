@@ -104,6 +104,16 @@ Binary tree representation will be cleaner.
 ```
 
 ```
+@type(
+    name: str  # def
+    age: int  # def
+    height: int = 1  # alias
+    weights: int = $weights  # alias/param
+)
+```
+
+
+```
 t1 <- @task(5)
 t2 <- @task(5)
 t3 <- @task(5)
@@ -177,7 +187,13 @@ parser = Schema(
 parser.parse("""
 @from(u = users)
 :@join(g = groups, @(u.id == g.id))
-:@where(@(u.id, g.id))
+:@where(@(u.id == g.id))
+""")
+
+parser.parse("""
+@from(u = users)
+:@join(g = groups, @(id))
+:@where(@(u.id == g.id))
 """)
 
 ```

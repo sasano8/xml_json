@@ -1,8 +1,7 @@
-from xml_json.transfermer_analyzer import TransformeAnalyzerBase
-from xml_json import (
-    JmlTransformer,
-)
 import pytest
+
+from xml_json import JmlTransformer
+from xml_json.transfermer_analyzer import TransformeAnalyzerBase
 
 
 def test_transfermer_analyzer():
@@ -39,3 +38,6 @@ def test_transfermer_analyzer():
 
     if spec := analyze({".value", ".expr"}):
         assert spec["is_allow_expression"]
+
+    if spec := analyze({".value", ".call"}):
+        assert spec["is_allow_call"]

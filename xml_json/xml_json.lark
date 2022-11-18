@@ -43,15 +43,16 @@ string : ESCAPED_STRING
             | param
             | alias
 
-
-identifier  : [CNAME ("." CNAME)*]
+?cname: CNAME -> cname
+identifier  : [cname ("." cname)*]
+tag  : [cname ("." cname)*] -> tag
 PARAM: "$" ("_"|LETTER) ("_"|LETTER|DIGIT)*
 param: PARAM [":" identifier ["=" (json_node|identifier)]]
 alias: identifier "=" (json_node|param|identifier)
 ?json_node: json
 
-node        : "@" identifier attrs help "(" elements ")" [chain*]
-chain        : ":@" identifier attrs help "(" elements ")"
+node        : "@" tag attrs help "(" elements ")" [chain*]
+chain        : ":@" tag attrs help "(" elements ")"
 attrs: [object] -> attrs
 help: [string] -> help
 
