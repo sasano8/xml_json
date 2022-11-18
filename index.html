@@ -546,6 +546,13 @@ Binary tree representation will be cleaner.</p>
     )
 )
 </code></pre></div>
+<div class="highlight"><pre><span></span><code>@type(
+    name: str  # def
+    age: int  # def
+    height: int = 1  # alias
+    weights: int = $weights  # alias/param
+)
+</code></pre></div>
 <div class="highlight"><pre><span></span><code>t1 &lt;- @task(5)
 t2 &lt;- @task(5)
 t3 &lt;- @task(5)
@@ -610,7 +617,13 @@ parser = Schema(
 parser.parse(&quot;&quot;&quot;
 @from(u = users)
 :@join(g = groups, @(u.id == g.id))
-:@where(@(u.id, g.id))
+:@where(@(u.id == g.id))
+&quot;&quot;&quot;)
+
+parser.parse(&quot;&quot;&quot;
+@from(u = users)
+:@join(g = groups, @(id))
+:@where(@(u.id == g.id))
 &quot;&quot;&quot;)
 </code></pre></div>
 
