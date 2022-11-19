@@ -22,6 +22,7 @@ flake8 = "^3.9.0"
 mypy = "^0.812"
 pytest = "^6.2.2"
 pytest-cov = "^3.0.0"
+ruff = "^0.0.128"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.4.2"
