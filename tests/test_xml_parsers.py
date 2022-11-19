@@ -24,7 +24,7 @@ def test_parse_from_xml():
 
     # TODO: python標準のxmlライブラリでは脆弱性があるため、セキュリティを気にする場合はdefusedxmlを使用する
 
-    from xml.dom.minidom import parse, parseString
+    from xml.dom.minidom import parseString
 
     document = parseString(
         """<?xml version="1.0" encoding="UTF-8"?>

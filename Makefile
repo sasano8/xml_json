@@ -10,6 +10,9 @@ format-black:
 format-isort:
 	@echo [isort] && poetry run isort --profile black --filter-files .
 
+format-ruff:
+	@echo [ruff] && poetry run ruff --exclude .venv,working .
+
 test:
 	@echo [pytest] && poetry run pytest -svx # exit instantly on first error or failed test.
 

@@ -1,7 +1,7 @@
 import pytest
 from lark import Lark
 
-from xml_json import Identifier, JmlTransformer, Node, ValueNode, get_parser, set_debug
+from xml_json import JmlTransformer, get_parser, set_debug
 
 
 @pytest.fixture
@@ -41,13 +41,13 @@ def test_json_transformer(as_json: Lark):
         tree = as_json.parse("''")
 
     tree = as_json.parse("true")
-    assert tf.transform(tree) == True
+    assert tf.transform(tree) is True
 
     tree = as_json.parse("false")
-    assert tf.transform(tree) == False
+    assert tf.transform(tree) is False
 
     tree = as_json.parse("null")
-    assert tf.transform(tree) == None
+    assert tf.transform(tree) is None
 
     tree = as_json.parse("[]")
     result = tf.transform(tree)

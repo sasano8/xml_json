@@ -2,7 +2,7 @@ from xml_json.base import AnonymousNode, RootNode, ValueNode
 
 
 def parse_xml(text):
-    from xml.dom.minidom import parse, parseString
+    from xml.dom.minidom import parseString
 
     document = parseString(text)
     return create_node(document)
