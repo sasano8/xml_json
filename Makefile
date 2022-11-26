@@ -18,3 +18,11 @@ test:
 
 test-report:
 	@echo [pytest] && poetry run pytest -svx --cov --cov-report html
+
+# sudoで実行
+admin:
+	@npm i -g vercel
+
+# TODO: 単にdeployするとファイル（requirements.txt）などが更新されない。その場合は、とりあえず、プロジェクトを消して再作成する
+deploy:
+	@vercel .

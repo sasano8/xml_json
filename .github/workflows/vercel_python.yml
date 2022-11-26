@@ -1,0 +1,21 @@
+name: deploy api
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - uses: amondnet/vercel-action@v20
+        with:
+          # GitHub Actions の Secrets で作成した値を参照する形で
+          # Vercel デプロイ時に必要となる各種パラメタを設定する
+          # vercel-args: '--prod' # Optional
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}}
+          working-directory: ./
