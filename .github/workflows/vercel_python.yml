@@ -1,11 +1,21 @@
 name: deploy api
+
 on:
+  workflow_run:
+    workflows: ["Run test"]
+    branches: [main]
+    types:
+      - completed
   push:
     branches:
       - main
+  pull_request:
+
 jobs:
-  deploy:
+  on-requested:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
